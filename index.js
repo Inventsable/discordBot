@@ -14,36 +14,6 @@ client.on('message', message => {
   }
 });
 
-// function rollDice(message) {
-//   let response = getDiceRollResponse(message);
-//   if (response) message.channel.send(response);
-// }
-
-// function getDiceRollResponse(message) {
-//   let str = message.content;
-//   if (!str.length || !/\d/.test(str)) return null;
-//   let content = str.replace(/^!roll/, '').trim();
-//   if (/d/.test(str)) {
-//     let rolls = str.split(/d/);
-//     let numberOfDice = +rolls[0];
-//     let range = +rolls[1];
-//     let results = [];
-//     for (var i = 1; i <= rolls; i++) {
-//       results.push({
-//         index: i,
-//         result: random(range),
-//         die: `d${range}`
-//       })
-//     }
-//     let data = results.map(item => {
-//       return `${index}) ${die}: ${result}`
-//     })
-//     return `${message.author} rolls:\r\n` + data.join('\r\n'); 
-//   } else if (!/\D/.test(str)) {
-//     return random(+str)
-//   }
-// }
-
 function deduce(message) {
   let str = message.content;
   let calls = {
@@ -55,10 +25,26 @@ function deduce(message) {
       state: /i\sam\sequal\sand\swhole/i,
       response: 'God changes, and man, and the form of them bodily;'
     },
+    c1: {
+      state: /For\sreally\sthis\smorning\sI've\snothing\sto\sdo\.\'$/i,
+      response: `Said the mouse to the cur: 'Such a trial, dear Sir, with no jury or judge, would be wasting our breath.'`
+    },
+    c2: {
+      state: /I\'ll\stry\sthe\swhole\scause\,\sand\scondemn\syou\sto\sdeath\./i,
+      callback: function(message) {
+        // Create the attachment using MessageAttachment
+        const attachment = new MessageAttachment('https://media3.giphy.com/media/Lcn0yF1RcLANG/giphy.gif');
+        // Send the attachment in the message channel
+        message.channel.send(message.author.username, attachment);
+        message.react(':sob:')
+      }
+    }
   }
   Object.keys(calls).forEach(key => {
     if (calls[key].state.test(str))
-      return message.channel.send(calls[key].response)
+      return !calls[key].callback
+        ? message.channel.send(calls[key].response) 
+        : calls[key].callback()
   })
 }
 
