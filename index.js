@@ -14,6 +14,35 @@ client.on('message', message => {
   }
 });
 
+function rollDice(message) {
+  let response = getDiceRollResponse(message);
+  if (response) message.channel.send(response);
+}
+
+function getDiceRollResponse(message) {
+  let str = message.content;
+  let content = str.replace(/^!roll/, '').trim();
+  if (/d/.test(str)) {
+    let rolls = str.split(/d/);
+    let numberOfDice = +rolls[0];
+    let range = +rolls[1];
+    let results = [];
+    for (var i = 1; i <= rolls; i++) {
+      results.push({
+        index: i,
+        result: random(range),
+        die: `d${range}`
+      })
+    }
+    let data = results.map(item => {
+      return `${index}) ${die}: ${result}`
+    })
+    return `${message.author} rolls:\r\n` + data.join('\r\n'); 
+  } else if (!/\D/.test(str)) {
+    return random(+str)
+  }
+}
+
 function deduce(message) {  
   let str = message.content;
   let responses = {
@@ -24,8 +53,15 @@ function deduce(message) {
   let isHertha = /i\sam\sthat\swhich\sbegan/i.test(str),
     isCarrolOne = /fury\ssaid\sto\sa\smouse/i.test(str),
     isCarrolTwo = /said\sthe\smouse\sto\sthe\scur/i.test(str);
-  if (!(isHertha || isCarrolOne || isCarrolTwo)) return null;
+  
+  if (/^\!debug/)
+    return message.channel.send(`${message.toString()}`)
 
+  // Roll if necessary
+  if (/^\!roll/.test(str)) return rollDice(message);
+  // Prevent bot from responding
+  if (!(isHertha || isCarrolOne || isCarrolTwo)) return null;
+  // Otherwise this must be a verse
   message.channel.send(`${message.author},`, isHertha 
     ? responses.hertha.join('\r\n')
     : isCarrolOne 
@@ -38,7 +74,7 @@ function random(min = 1, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-const randomInteger = (min, max) => {
+const randomInteger = (min = 1, max) => {
   const range = max - min;
   const maxGeneratedValue = 0xFFFFFFFF;
   const possibleResultValues = range + 1;
