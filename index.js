@@ -32,11 +32,8 @@ function deduce(message) {
     c2: {
       state: /I\'ll\stry\sthe\swhole\scause\,\sand\scondemn\syou\sto\sdeath\./i,
       callback: function(message) {
-        // Create the attachment using MessageAttachment
-        const attachment = new MessageAttachment('https://media3.giphy.com/media/Lcn0yF1RcLANG/giphy.gif');
-        // Send the attachment in the message channel
-        message.channel.send(message.author.username, attachment);
-        message.react(':sob:')
+        message.channel.send(`${message.author.username} https://media3.giphy.com/media/Lcn0yF1RcLANG/giphy.gif`);
+        // message.react(':sob:')
       }
     }
   }
