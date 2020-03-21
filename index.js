@@ -10,7 +10,7 @@ client.on('message', message => {
   if (message.content === 'ping') {
     message.reply('pong');
   } else {
-    // deduce(message);
+    deduce(message);
   }
 });
 
@@ -43,6 +43,24 @@ client.on('message', message => {
 //     return random(+str)
 //   }
 // }
+
+function deduce(message) {
+  let str = message.content;
+  let calls = {
+    h1: {
+      state: /out\sof\sme\sthe\syears\sroll/i,
+      response: 'Out of me God and man;'
+    },
+    h2: {
+      state: /i\sam\sequal\sand\swhole/i,
+      response: 'God changes, and man, and the form of them bodily;'
+    },
+  }
+  Object.keys(calls).forEach(key => {
+    if (calls[key].state.test(str))
+      return message.channel.send(calls[key].response)
+  })
+}
 
 // function deduce(message) {  
 //   let str = message.content;
@@ -101,6 +119,4 @@ client.on('message', message => {
 //   return min + (generated % possibleResultValues);
 // };
 
-
-// THIS  MUST  BE  THIS  WAYtha
 client.login(process.env.BOT_TOKEN);//BOT_TOKEN is the Client Secret
