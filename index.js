@@ -12,9 +12,6 @@ client.on('message', message => {
   } else {
     deduce(message)
   }
-
-
-
 });
 
 function deduce(message) {  
@@ -28,13 +25,44 @@ function deduce(message) {
     isCarrolOne = /fury\ssaid\sto\sa\smouse/i.test(str),
     isCarrolTwo = /said\sthe\smouse\sto\sthe\scur/i.test(str);
   if (!(isHertha || isCarrolOne || isCarrolTwo)) return null;
+
   message.channel.send(`${message.author},`, isHertha 
-    ? responses.hertha 
+    ? responses.hertha.join('\r\n')
     : isCarrolOne 
-    ? responses.carrolOne
-    : responses.carrolTwo
+    ? responses.carrolOne.join('')
+    : responses.carrolTwo.join('')
   );
 }
+
+function random(min = 1, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+const randomInteger = (min, max) => {
+  const range = max - min;
+  const maxGeneratedValue = 0xFFFFFFFF;
+  const possibleResultValues = range + 1;
+  const possibleGeneratedValues = maxGeneratedValue + 1;
+  const remainder = possibleGeneratedValues % possibleResultValues;
+  const maxUnbiased = maxGeneratedValue - remainder;
+  if (!Number.isInteger(min) || !Number.isInteger(max) ||
+    max > Number.MAX_SAFE_INTEGER || min < Number.MIN_SAFE_INTEGER) {
+    throw new Error('Arguments must be safe integers.');
+  } else if (range > maxGeneratedValue) {
+    throw new Error(`Range of ${range} (from ${min} to ${max}) > ${maxGeneratedValue}.`);
+  } else if (max < min) {
+    throw new Error(`max (${max}) must be >= min (${min}).`);
+  } else if (min === max) {
+    return min;
+  }
+
+  let generated;
+  do {
+    generated = crypto.getRandomValues(new Uint32Array(1))[0];
+  } while (generated > maxUnbiased);
+
+  return min + (generated % possibleResultValues);
+};
 
 
 // THIS  MUST  BE  THIS  WAYtha
