@@ -1,0 +1,17 @@
+{
+  "name": "robolus",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Thomas Scharstein II <tom@inventsable.cc>",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "discord.js": "11.1.0",
+    "request": "2.81.0"
+  }
+}
