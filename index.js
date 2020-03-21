@@ -21,6 +21,7 @@ function rollDice(message) {
 
 function getDiceRollResponse(message) {
   let str = message.content;
+  if (!str.length || !/\d/.test(str)) return null;
   let content = str.replace(/^!roll/, '').trim();
   if (/d/.test(str)) {
     let rolls = str.split(/d/);
